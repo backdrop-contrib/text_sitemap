@@ -1,0 +1,8 @@
+Installation Instructions:
+
+1. Copy the urllist module directory in your modules directory.
+
+2. Enable urllist module at: administer > modules
+
+4. The sitemap is now operational at q=urllist. Configure advanced options at
+   administer > settings > urllist.

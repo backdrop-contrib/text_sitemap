@@ -1,0 +1,68 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Creates a list of URLs for search engines to index.
+ *
+ * @author David Kent Norman <deekayen {{at}} deekayen [[dot]] net>
+ */
+
+/**
+ * Implementation of hook_help().
+ */
+function urllist_help($section) {
+  switch ($section) {
+    case 'admin/modules#description':
+      return t('Creates a list of URLs at q=urllist');
+   case 'admin/settings/gsitemap':
+      return t('The following options allow you to alter the behavior of the URLlist module.');
+  }
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function urllist_menu($may_cache) {
+  $items = array();
+
+  if ($may_cache) {
+    $items[] = array('path' => 'urllist', 'title' => t('urllist'),
+      'callback' => 'urllist_output',
+      'type' => MENU_CALLBACK,
+      'access' => 1);
+  }
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_settings().
+ */
+function urllist_settings() {
+  $output .= form_group(t('Other Settings'),
+               form_checkbox(t('Log accesses'),'urllist_logacc',1,variable_get('urllist_logacc',0),t('If enabled, an watchdog entry will be made each time the URL list is accessed, containing information about the requestor.'))
+             );
+  return $output;
+}
+
+function urllist_output() {
+  header("Content-type: text/plain");
+  print url('', NULL, NULL, TRUE) . "\n";
+  $result = db_query(db_rewrite_sql("SELECT DISTINCT {node.nid}, type, status, promote, changed, dst FROM {node} LEFT JOIN {url_alias} ON src=CONCAT('node/',{node}.nid)",'node'));
+  while($node = db_fetch_object($result)) {
+    if($node->status) { // add check for if the node type is disabled or not
+      if(isset($node->dst)) { // alias is named
+        print url($node->dst, NULL, NULL, TRUE) . "\n";
+      }
+      else {
+        print url('node/' . $node->nid, NULL, NULL, TRUE) . "\n";
+      }
+    }
+  }
+  if(variable_get('urllist_logacc',0)) {
+    watchdog('urllist','URL list downloaded by ' . getenv('HTTP_USER_AGENT') . ' at ' . getenv('REMOTE_ADDR') . '.');
+  }
+}
+
+?>
