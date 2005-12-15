@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: urllist.module, v1.0
 
 /**
  * @file
@@ -49,7 +49,7 @@ function urllist_settings() {
 function urllist_output() {
   header("Content-type: text/plain");
   print url('', NULL, NULL, TRUE) . "\n";
-  $result = db_query(db_rewrite_sql("SELECT DISTINCT {node.nid}, type, status, promote, changed, dst FROM {node} LEFT JOIN {url_alias} ON src=CONCAT('node/',{node}.nid)",'node'));
+  $result = db_query(db_rewrite_sql("SELECT DISTINCT(n.nid), n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',n.nid)",'node'));
   while($node = db_fetch_object($result)) {
     if($node->status) { // add check for if the node type is disabled or not
       if(isset($node->dst)) { // alias is named
