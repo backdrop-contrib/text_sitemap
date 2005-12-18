@@ -1,10 +1,11 @@
 <?php
-// $Id: urllist.module, v1.0
+// $Id$
 
 /**
  * @file
  * Creates a list of URLs for search engines to index.
  *
+ * @version $Id$
  * @author David Kent Norman <deekayen {{at}} deekayen [[dot]] net>
  */
 
@@ -38,14 +39,23 @@ function urllist_menu($may_cache) {
 
 /**
  * Implementation of hook_settings().
+ *
+ * @return array
  */
 function urllist_settings() {
-  $output .= form_group(t('Other Settings'),
-               form_checkbox(t('Log accesses'),'urllist_logacc',1,variable_get('urllist_logacc',0),t('If enabled, an watchdog entry will be made each time the URL list is accessed, containing information about the requestor.'))
-             );
-  return $output;
+  $form['urllist_logacc'] = array(
+    '#type'          => 'checkbox',
+    '#title'         => 'Log accesses',
+    '#default_value' => variable_get('urllist_logacc', 0),
+    '#description'   => t('If enabled, an watchdog entry will be made each time the URL list is accessed, containing information about the requestor.')
+  );
+  return $form;
 }
 
+/**
+ * Print list of URLs in plaintext format
+ *
+ */
 function urllist_output() {
   header("Content-type: text/plain");
   print url('', NULL, NULL, TRUE) . "\n";
