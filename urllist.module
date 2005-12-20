@@ -47,7 +47,7 @@ function urllist_settings() {
     '#type'          => 'checkbox',
     '#title'         => 'Log accesses',
     '#default_value' => variable_get('urllist_logacc', 0),
-    '#description'   => t('If enabled, an watchdog entry will be made each time the URL list is accessed, containing information about the requestor.')
+    '#description'   => t('If enabled, a watchdog entry will be made each time the URL list is accessed, containing information about the requestor.')
   );
   return $form;
 }
