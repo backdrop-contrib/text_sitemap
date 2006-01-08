@@ -70,6 +70,15 @@ function urllist_output() {
       }
     }
   }
+  if(module_exist('taxonomy')) {
+    $result = db_query("SELECT d.tid FROM {term_data} d");
+    while($topic = db_fetch_object($result)) {
+      print url('taxonomy/term/' . $topic->tid, NULL, NULL, TRUE) . "\n";
+    }
+  }
+  if(module_exist('blog')) {
+    print url('blog', NULL, NULL, TRUE) . "\n";
+  }
   if(variable_get('urllist_logacc',0)) {
     watchdog('urllist','URL list downloaded by ' . getenv('HTTP_USER_AGENT') . ' at ' . getenv('REMOTE_ADDR') . '.');
   }
