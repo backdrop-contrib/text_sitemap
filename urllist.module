@@ -28,7 +28,7 @@ function urllist_menu($may_cache) {
   $items = array();
 
   if ($may_cache) {
-    $items[] = array('path' => 'urllist', 'title' => t('urllist'),
+    $items[] = array('path' => 'urllist.txt', 'title' => t('urllist'),
       'callback' => 'urllist_output',
       'type' => MENU_CALLBACK,
       'access' => 1);
