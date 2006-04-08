@@ -15,8 +15,8 @@
 function urllist_help($section) {
   switch ($section) {
     case 'admin/modules#description':
-      return t('Creates a list of URLs at q=urllist');
-   case 'admin/settings/gsitemap':
+      return t('Creates a list of URLs at q=urllist.txt or urllist.txt');
+   case 'admin/settings/urllist':
       return t('The following options allow you to alter the behavior of the URLlist module.');
   }
 }
@@ -27,12 +27,10 @@ function urllist_help($section) {
 function urllist_menu($may_cache) {
   $items = array();
 
-  if ($may_cache) {
-    $items[] = array('path' => 'urllist.txt', 'title' => t('urllist'),
-      'callback' => 'urllist_output',
-      'type' => MENU_CALLBACK,
-      'access' => 1);
-  }
+  $items[] = array('path' => 'urllist.txt', 'access' => true,
+    'callback' => 'urllist_output', 'type' => MENU_CALLBACK, 'title' => 'urllist.txt');
+  $items[] = array('path' => 'urllist', 'access' => true,
+    'callback' => 'urllist_output', 'type' => MENU_CALLBACK, 'title' => 'urllist');
 
   return $items;
 }
@@ -57,9 +55,9 @@ function urllist_settings() {
  *
  */
 function urllist_output() {
-  header("Content-type: text/plain");
+  header('Content-type: text/plain');
   print url('', NULL, NULL, TRUE) . "\n";
-  $result = db_query(db_rewrite_sql("SELECT nid, {node}.type, {node}.status, {node}.promote, {node}.changed, {url_alias}.dst FROM {node} LEFT JOIN {url_alias} ON {url_alias}.src=CONCAT('node/',{node}.nid)",'node'));
+  $result = db_query(db_rewrite_sql("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',n.nid)",'node'));
   while($node = db_fetch_object($result)) {
     if($node->status) { // add check for if the node type is disabled or not
       if(isset($node->dst)) { // alias is named
