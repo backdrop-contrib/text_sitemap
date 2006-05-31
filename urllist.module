@@ -78,6 +78,9 @@ function urllist_output() {
   if(module_exist('image')) {
     print url('image', NULL, NULL, TRUE) . "\n";
   }
+  if(module_exist('randomizer')) {
+    print url('randomizer', NULL, NULL, TRUE) . "\n";
+  }
   if(module_exist('blog')) {
     print url('blog', NULL, NULL, TRUE) . "\n";
   }
