@@ -7,6 +7,7 @@
  *
  * @version $Id$
  * @author David Kent Norman <deekayen {{at}} deekayen [[dot]] net>
+ * @link http://deekayen.net/
  */
 
 /**
@@ -57,7 +58,7 @@ function urllist_settings() {
 function urllist_output() {
   header('Content-type: text/plain');
   print url('', NULL, NULL, TRUE) . "\n";
-  $result = db_query(db_rewrite_sql("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',n.nid)",'node'));
+  $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',n.nid)");
   while($node = db_fetch_object($result)) {
     if($node->status) { // add check for if the node type is disabled or not
       if(isset($node->dst)) { // alias is named
@@ -73,6 +74,9 @@ function urllist_output() {
     while($topic = db_fetch_object($result)) {
       print url('taxonomy/term/' . $topic->tid, NULL, NULL, TRUE) . "\n";
     }
+  }
+  if(module_exist('image')) {
+    print url('image', NULL, NULL, TRUE) . "\n";
   }
   if(module_exist('blog')) {
     print url('blog', NULL, NULL, TRUE) . "\n";
