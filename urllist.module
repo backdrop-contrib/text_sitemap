@@ -56,6 +56,9 @@ function urllist_settings() {
  *
  */
 function urllist_output() {
+  if(!ini_get('safe_mode')) {
+    set_time_limit(240);
+  }
   header('Content-type: text/plain');
   print url('', NULL, NULL, TRUE) . "\n";
   $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',n.nid)");
