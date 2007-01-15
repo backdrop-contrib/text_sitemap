@@ -1,8 +1,7 @@
-Urllist Module
+URL list module
 
 Author:
 David Kent Norman
-<deekayen {{at}} deekayen [[dot]] net>
 http://deekayen.net/
 
 DESCRIPTION
