@@ -22,14 +22,15 @@ function urllist_menu() {
     'page callback' => 'theme',
     'page arguments' => array('urllist'),
     'type' => MENU_CALLBACK,
-    'title' => 'urllist.txt',
+    'access callback' => 'user_access',
     'access arguments' => array('access content')
   );
   $items['urllist'] = array(
     'page callback' => 'theme',
     'page arguments' => array('urllist'),
     'type' => MENU_CALLBACK,
-    'title' => 'urllist'
+    'access callback' => 'user_access',
+    'access arguments' => array('access content')
   );
   $items['admin/settings/urllist'] = array(
     'title' => 'URL list',
@@ -46,7 +47,8 @@ function urllist_menu() {
       'title' => 'Yahoo! authentication',
       'page callback' => 'urllist_verify_yahoo',
       'type' => MENU_CALLBACK,
-      'access arguments' => true,
+    'access callback' => 'user_access',
+    'access arguments' => array('access content')
     );
   }
 
