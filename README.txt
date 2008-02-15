@@ -22,4 +22,4 @@ Potential future features are gz output, turning off certain node types
 in the list, and the option to override specific nodes being listed.
 
 For now, if you use this module, and want to override listing a specific
-node, you’d have to use robots.txt to make an exclusion or unpublish it.
+node, you could use robots.txt to make an exclusion or unpublish it.

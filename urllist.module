@@ -34,21 +34,25 @@ function urllist_menu() {
   );
   $items['admin/settings/urllist'] = array(
     'title' => 'URL list',
-    'description' => t('Toggle access log for URL list.'),
+    'description' => 'Toggle access log for URL list and edit Yahoo! API information.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('urllist_admin_settings'),
     'access callback' => 'user_access',
     'access arguments' => array('administer site configuration'),
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_NORMAL_ITEM
   );
 
+  /* since this would get skipped on during the module install
+  a _submit() hook was added to the settings form to force
+  a menu rebuild so this can be captured if a Yahoo verification
+  URL was added. */
   if ($yahoo_link = variable_get('urllist_yahoo_auth_link', '')) {
     $items[$yahoo_link] = array(
       'title' => 'Yahoo! authentication',
       'page callback' => 'urllist_verify_yahoo',
       'type' => MENU_CALLBACK,
-    'access callback' => 'user_access',
-    'access arguments' => array('access content')
+      'access callback' => 'user_access',
+      'access arguments' => array('access content')
     );
   }
 
@@ -61,6 +65,7 @@ function urllist_menu() {
  * @return array
  */
 function urllist_admin_settings() {
+  $form = array();
   $form['urllist_logacc'] = array(
     '#type'          => 'checkbox',
     '#title'         => 'Log accesses',
@@ -124,14 +129,34 @@ function urllist_admin_settings() {
     '#default_value' => variable_get('urllist_yahoo_auth_content', ''),
     '#description' => t('The authentication file has a specific string of random characters Yahoo! will look for inside the above file name when it revalidates your site ownership.'),
   );
-  return system_settings_form($form);
+
+  /* While it is cleaner in the code to just add the extra
+  submit handler first and return system_settings_form($form),
+  the system_settings_form() information needs to be first
+  so the information is saved to the urllist_yahoo_auth_link
+  variable before menu_rebuild() is called so hook_menu() can
+  add it to the menu tables in the database since hook_menu()
+  is no longer called on every page load as of Drupal 6. */
+  $form = system_settings_form($form);
+  $form['#submit'][] = 'urllist_admin_settings_submit';
+
+  return $form;
+}
+
+/**
+ * Capture any Yahoo! verification link URLs so
+ * the menu can know to react to them when requested.
+ */
+function urllist_admin_settings_submit() {
+  menu_rebuild();
+  drupal_set_message(t('The URL List module re-built the menu information to check for a URL for Yahoo! authentication.'), 'status');
 }
 
 /**
  * Implmentation of hook_nodeapi().
  */
 function urllist_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
-  switch($op) {
+  switch ($op) {
     case 'insert':
     case 'delete':
       if (variable_get('urllist_yahoo_submit', 0) && $node->status) {
@@ -157,45 +182,44 @@ function urllist_cron() {
 
 /**
  * Print list of URLs in plaintext format
- *
  */
 function theme_urllist() {
   if (!ini_get('safe_mode')) {
     set_time_limit(240);
   }
   header('Content-type: text/plain');
-  print url('', array('absolute' => TRUE)) . "\n";
+  print url('', array('absolute' => TRUE)) ."\n";
   $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',n.nid)");
   while ($node = db_fetch_object($result)) {
     if ($node->status) { // add check for if the node type is disabled or not
       if (isset($node->dst)) { // alias is named
-        print url($node->dst, array('absolute' => TRUE)) . "\n";
+        print url($node->dst, array('absolute' => TRUE)) ."\n";
       }
       else {
-        print url('node/' . $node->nid, array('absolute' => TRUE)) . "\n";
+        print url('node/'. $node->nid, array('absolute' => TRUE)) ."\n";
       }
     }
   }
   if (module_exists('taxonomy')) {
     $result = db_query('SELECT d.tid FROM {term_data} d');
     while ($topic = db_fetch_object($result)) {
-      print url('taxonomy/term/' . $topic->tid, array('absolute' => TRUE)) . "\n";
+      print url('taxonomy/term/'. $topic->tid, array('absolute' => TRUE)) ."\n";
     }
   }
   if (module_exists('search')) {
-    print url('search', array('absolute' => TRUE)) . "\n";
+    print url('search', array('absolute' => TRUE)) ."\n";
   }
   if (module_exists('image')) {
-    print url('image', array('absolute' => TRUE)) . "\n";
+    print url('image', array('absolute' => TRUE)) ."\n";
   }
   if (module_exists('randomizer')) {
-    print url('randomizer', array('absolute' => TRUE)) . "\n";
+    print url('randomizer', array('absolute' => TRUE)) ."\n";
   }
   if (module_exists('blog')) {
-    print url('blog', array('absolute' => TRUE)) . "\n";
+    print url('blog', array('absolute' => TRUE)) ."\n";
   }
-  if (variable_get('urllist_logacc',0)) {
-    watchdog('urllist', 'URL list downloaded by ' . getenv('HTTP_USER_AGENT') . ' at ' . getenv('REMOTE_ADDR') . '.', NULL, WATCHDOG_INFO);
+  if (variable_get('urllist_logacc', 0)) {
+    watchdog('urllist', 'URL list downloaded by '. getenv('HTTP_USER_AGENT') .' at '. getenv('REMOTE_ADDR') .'.', NULL, WATCHDOG_INFO);
   }
 }
 
@@ -203,7 +227,7 @@ function theme_urllist() {
  * Prints a string for Yahoo Site Explorer authentication
  */
 function urllist_verify_yahoo() {
-  echo variable_get('urllist_yahoo_auth_content', '');
+  die(variable_get('urllist_yahoo_auth_content', ''));
 }
 
 /**
@@ -233,7 +257,7 @@ function _urllist_submit_yahoo() {
 }
 
 /**
- * registry
+ * Implementation of hook_theme().
  *
  * @return array
  */
