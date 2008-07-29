@@ -1,4 +1,5 @@
 ; $Id$
 name = "URL list"
 description = "Creates a list of node URLs at /q=urllist.txt or (/urllist.txt for clean URLs) for search engine indexing."
-core = 6.x
+core = 7.x
+files[] = urllist.module
