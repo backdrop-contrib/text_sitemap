@@ -189,7 +189,7 @@ function theme_urllist() {
   }
   header('Content-type: text/plain');
   print url('', array('absolute' => TRUE)) ."\n";
-  $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',n.nid)");
+  $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',CAST(n.nid as CHAR))");
   while ($node = db_fetch_object($result)) {
     if ($node->status) { // add check for if the node type is disabled or not
       if (isset($node->dst)) { // alias is named
