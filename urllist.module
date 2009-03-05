@@ -67,12 +67,11 @@ function urllist_menu() {
 function urllist_admin_settings() {
   $form = array();
   $form['urllist_logacc'] = array(
-    '#type'          => 'checkbox',
-    '#title'         => 'Log accesses',
+    '#type' => 'checkbox',
+    '#title' => 'Log accesses',
     '#default_value' => variable_get('urllist_logacc', 0),
-    '#description'   => t('If enabled, a watchdog entry will be made each time the URL list is accessed, containing information about the requestor.')
+    '#description' => t('If enabled, a watchdog entry will be made each time the URL list is accessed, containing information about the requestor.')
   );
-
   $form['url_submit_yahoo'] = array(
     '#type' => 'fieldset',
     '#title' => t('Yahoo! Update Notification API'),
@@ -107,7 +106,6 @@ function urllist_admin_settings() {
     '#return value' => '',
     '#default_value' => variable_get('urllist_yahoo_appid', '')
   );
-
   $form['auth'] = array(
     '#type' => 'fieldset',
     '#title' => t('Yahoo! Site Explorer Authentication'),
@@ -153,23 +151,29 @@ function urllist_admin_settings_submit() {
 }
 
 /**
- * Implmentation of hook_nodeapi().
+ * Implmentation of hook_nodeapi_insert().
  */
-function urllist_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
-  switch ($op) {
-    case 'insert':
-    case 'delete':
-      if (variable_get('urllist_yahoo_submit', 0) && $node->status) {
-        watchdog('urllist', "Submitting URL list to Yahoo! because node %node_id was inserted or deleted.", array('%node_id' => $node->nid), WATCHDOG_DEBUG);
-        _urllist_submit_yahoo();
-      }
-      break;
-    case 'update':
-      if (variable_get('urllist_yahoo_submit', 0) && ($node->status || $oldnode->status)) {
-        watchdog('urllist', "Submitting URL list to Yahoo! because node %node_id was updated.", array('%node_id' => $node->nid), WATCHDOG_DEBUG);
-        _urllist_submit_yahoo();
-      }
-      break;
+function urllist_nodeapi_insert(&$node, $teaser = NULL, $page = NULL) {
+  if (variable_get('urllist_yahoo_submit', 0) && $node->status) {
+    watchdog('urllist', "Submitting URL list to Yahoo! because node %node_id was inserted or deleted.", array('%node_id' => $node->nid), WATCHDOG_DEBUG);
+    _urllist_submit_yahoo();
+  }
+}
+
+/**
+ * Implmentation of hook_nodeapi_delete().
+ */
+function urllist_nodeapi_delete(&$node, $teaser = NULL, $page = NULL) {
+  urllist_nodeapi_insert($node, $teaser, $page);
+}
+
+/**
+ * Implmentation of hook_nodeapi_update().
+ */
+function urllist_nodeapi_update(&$node, $teaser = NULL, $page = NULL) {
+  if (variable_get('urllist_yahoo_submit', 0) && ($node->status || $oldnode->status)) {
+    watchdog('urllist', "Submitting URL list to Yahoo! because node %node_id was updated.", array('%node_id' => $node->nid), WATCHDOG_DEBUG);
+    _urllist_submit_yahoo();
   }
 }
 
@@ -188,38 +192,38 @@ function theme_urllist() {
     set_time_limit(240);
   }
   header('Content-type: text/plain');
-  print url('', array('absolute' => TRUE)) ."\n";
+  print url('', array('absolute' => TRUE)) . "\n";
   $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',CAST(n.nid as CHAR))");
-  while ($node = db_fetch_object($result)) {
+  while ($node = $result->fetchObject()) {
     if ($node->status) { // add check for if the node type is disabled or not
       if (isset($node->dst)) { // alias is named
-        print url($node->dst, array('absolute' => TRUE)) ."\n";
+        print url($node->dst, array('absolute' => TRUE)) . "\n";
       }
       else {
-        print url('node/'. $node->nid, array('absolute' => TRUE)) ."\n";
+        print url('node/' . $node->nid, array('absolute' => TRUE)) . "\n";
       }
     }
   }
   if (module_exists('taxonomy')) {
-    $result = db_query('SELECT d.tid FROM {term_data} d');
-    while ($topic = db_fetch_object($result)) {
-      print url('taxonomy/term/'. $topic->tid, array('absolute' => TRUE)) ."\n";
+    $result = db_query('SELECT d.tid FROM {taxonomy_term_data} d');
+    while ($topic = $result->fetchObject()) {
+      print url('taxonomy/term/' . $topic->tid, array('absolute' => TRUE)) . "\n";
     }
   }
   if (module_exists('search')) {
-    print url('search', array('absolute' => TRUE)) ."\n";
+    print url('search', array('absolute' => TRUE)) . "\n";
   }
   if (module_exists('image')) {
-    print url('image', array('absolute' => TRUE)) ."\n";
+    print url('image', array('absolute' => TRUE)) . "\n";
   }
   if (module_exists('randomizer')) {
-    print url('randomizer', array('absolute' => TRUE)) ."\n";
+    print url('randomizer', array('absolute' => TRUE)) . "\n";
   }
   if (module_exists('blog')) {
-    print url('blog', array('absolute' => TRUE)) ."\n";
+    print url('blog', array('absolute' => TRUE)) . "\n";
   }
   if (variable_get('urllist_logacc', 0)) {
-    watchdog('urllist', 'URL list downloaded by '. getenv('HTTP_USER_AGENT') .' at '. getenv('REMOTE_ADDR') .'.', NULL, WATCHDOG_INFO);
+    watchdog('urllist', 'URL list downloaded by ' . getenv('HTTP_USER_AGENT') . ' at ' . getenv('REMOTE_ADDR') . '.', NULL, WATCHDOG_INFO);
   }
 }
 
@@ -238,7 +242,7 @@ function urllist_verify_yahoo() {
  * @link https://developer.yahoo.com/wsregapp/index.php?view
  */
 function _urllist_submit_yahoo() {
-  $result = drupal_http_request('http://search.yahooapis.com/SiteExplorerService/V1/updateNotification?appid='. variable_get('urllist_yahoo_appid', '') .'&url='. url('urllist.txt', array('absolute' => TRUE)));
+  $result = drupal_http_request('http://search.yahooapis.com/SiteExplorerService/V1/updateNotification?appid=' . variable_get('urllist_yahoo_appid', '') . '&url=' . url('urllist.txt', array('absolute' => TRUE)));
   if ($result->code == 200) {
     watchdog('urllist', 'URL list successfully submitted to Yahoo!', NULL, WATCHDOG_INFO);
   }
@@ -246,7 +250,7 @@ function _urllist_submit_yahoo() {
     watchdog('urllist', 'Error occurred submitting URL list to Yahoo!: @code: @data', array('@code' => $result->code, '@data' => $result->data), WATCHDOG_ERROR);
   }
   if (variable_get('urllist_yahoo_rss_submit', 0)) {
-    $result = drupal_http_request('http://search.yahooapis.com/SiteExplorerService/V1/updateNotification?appid='. variable_get('urllist_yahoo_appid', '') .'&url='. url('rss.xml', array('absolute' => TRUE)));
+    $result = drupal_http_request('http://search.yahooapis.com/SiteExplorerService/V1/updateNotification?appid=' . variable_get('urllist_yahoo_appid', '') . '&url=' . url('rss.xml', array('absolute' => TRUE)));
     if ($result->code == 200) {
       watchdog('urllist', 'RSS feed successfully submitted to Yahoo!.', NULL, WATCHDOG_INFO);
     }
