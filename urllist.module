@@ -32,7 +32,7 @@ function urllist_menu() {
     'access callback' => 'user_access',
     'access arguments' => array('access content')
   );
-  $items['admin/settings/urllist'] = array(
+  $items['admin/config/urllist'] = array(
     'title' => 'URL list',
     'description' => 'Toggle access log for URL list and edit Yahoo! API information.',
     'page callback' => 'drupal_get_form',
@@ -193,7 +193,12 @@ function theme_urllist() {
   }
   header('Content-type: text/plain');
   print url('', array('absolute' => TRUE)) . "\n";
-  $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',CAST(n.nid as CHAR))");
+  if (module_exists('path')) {
+    $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed, u.dst FROM {node} n LEFT JOIN {url_alias} u ON u.src=CONCAT('node/',CAST(n.nid as CHAR))");
+  }
+  else {
+    $result = db_query("SELECT n.nid, n.type, n.status, n.promote, n.changed FROM {node} n");
+  }
   while ($node = $result->fetchObject()) {
     if ($node->status) { // add check for if the node type is disabled or not
       if (isset($node->dst)) { // alias is named
