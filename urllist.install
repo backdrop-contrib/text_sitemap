@@ -2,7 +2,12 @@
 // $Id$
 
 /**
- * Implementation of hook_uninstall().
+ * @file
+ * Install, update and uninstall functions for the urllist module.
+ */
+
+/**
+ * Implements hook_uninstall().
  */
 function urllist_uninstall() {
   variable_del('urllist_logacc');

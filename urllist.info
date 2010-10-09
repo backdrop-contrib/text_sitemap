@@ -2,5 +2,6 @@
 name = "URL list"
 description = "Creates a list of node URLs at /q=urllist.txt or (/urllist.txt for clean URLs) for search engine indexing."
 core = 7.x
-files[] = urllist.module
+
 files[] = urllist.install
+files[] = urllist.module
