@@ -1,11 +1,9 @@
 <?php
-// $Id$
 
 /**
  * @file
  * Creates a list of URLs for search engines to index.
  *
- * @version $Id$
  * @author David Kent Norman
  * @link http://deekayen.net/
  */
