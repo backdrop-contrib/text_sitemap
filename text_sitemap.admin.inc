@@ -12,6 +12,13 @@
  */
 function text_sitemap_admin_settings() {
   $form = array();
+  $form['sitemap'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Sitemap'),
+  );
+  $form['sitemap']['link'] = array(
+    '#markup' => l(t('View sitemap.txt'), 'sitemap.txt'),
+  );
   $form['google'] = array(
     '#type' => 'fieldset',
     '#title' => t('Google site verification'),
