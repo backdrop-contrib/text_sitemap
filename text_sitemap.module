@@ -42,6 +42,8 @@ function text_sitemap_list_urls() {
   $query = db_select('node', 'n');
   $query->fields('n', array('nid', 'type', 'uid', 'status'));
   $query->condition('status', 1);
+  $query->orderBy('changed', 'DESC');
+  $query->limit(49999); // Protocol max 50,000: http://www.sitemaps.org/protocol.html
   $result = $query->execute();
 
   $account = user_load(0);
