@@ -2,3 +2,4 @@ name = Text sitemap
 description = Creates a virtual sitemap.txt for search engine indexing.
 backdrop = 1.x
 type = module
+configure = admin/config/services/text_sitemap
