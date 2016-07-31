@@ -7,7 +7,12 @@ Text sitemaps are supported by [Google Webmaster Tools](https://support.google.c
 
 If you use this module, and want to override listing a specific node, you could use robots.txt to make an exclusion or unpublish it.
 
-The original port of this was based on code that was written before Views existed. It might be neat to make the next major version release based on a Views query instead of the custom code in this module.
+Configuration
+-------------
+
+The configuration options support verifying through Google Search Console using either or both of the HTML file and HTML tag methods.
+
+![Text sitemap configuration form](images/text_sitemap_config.png)
 
 Current Maintainer
 ------------------
