@@ -9,18 +9,6 @@
  */
 
 /**
- * Implements hook_perm().
- */
-function text_sitemap_permission() {
-  return array(
-    'administer text sitemap' => array(
-      'title' => t('Administer text sitemap'),
-      'description' => t('Change site verification information.'),
-    ),
-  );
-}
-
-/**
  * Implements hook_menu().
  *
  * @return array
@@ -33,29 +21,6 @@ function text_sitemap_menu() {
     'type' => MENU_CALLBACK,
     'access callback' => 'text_sitemap_access',
   );
-  $items['admin/config/services/text_sitemap'] = array(
-    'title' => 'Text sitemap',
-    'description' => 'Change site verification information.',
-    'page callback' => 'backdrop_get_form',
-    'page arguments' => array('text_sitemap_admin_settings'),
-    'access callback' => 'user_access',
-    'access arguments' => array('administer text sitemap'),
-    'type' => MENU_NORMAL_ITEM,
-    'file' => 'text_sitemap.admin.inc',
-  );
-
-  /* since this would get skipped on during the module install
-   a _submit() hook was added to the settings form to force
-   a menu rebuild so this can be captured if a Google verification
-   URL was added. */
-  if ($google_link = config_get('text_sitemap.settings', 'google_html_verification')) {
-    $items[$google_link] = array(
-      'page callback' => 'text_sitemap_verify_google',
-      'type' => MENU_CALLBACK,
-      'access callback' => 'text_sitemap_access',
-    );
-  }
-
   return $items;
 }
 
@@ -125,31 +90,5 @@ function text_sitemap_output() {
 function text_sitemap_cron() {
   if (!cache_get('text_sitemap', 'cache')) {
     text_sitemap_list_urls();
-  }
-}
-
-/**
- * Prints a verification string for Google search console sitemap submission.
- */
-function text_sitemap_verify_google() {
-  $filename = config_get('text_sitemap.settings', 'google_html_verification');
-  watchdog('text_sitemap', 'Google HTML verification was accessed.', array(), WATCHDOG_DEBUG);
-  die('google-site-verification: '. trim(check_plain($filename)));
-}
-
-/**
- * Implements hook_preprocess_page().
- */
-function text_sitemap_preprocess_page(&$variables) {
-  $meta_verification = config_get('text_sitemap.settings', 'google_meta_verification');
-  if (!empty($meta_verification)) {
-    $element = array(
-      '#tag' => 'meta',
-      '#attributes' => array(
-        'name' => 'google-site-verification',
-        'content' => trim(check_plain($meta_verification)),
-      ),
-    );
-    backdrop_add_html_head($element, 'text_sitemap_google_verification');
   }
 }

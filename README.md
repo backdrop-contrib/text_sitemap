@@ -12,9 +12,7 @@ Note that the sitemap.txt file is cached so may not reflect new content until af
 Configuration
 -------------
 
-The configuration options support verifying through Google Search Console using either or both of the HTML file and HTML tag methods.
-
-![Text sitemap configuration form](images/text_sitemap_config.png)
+None.
 
 Current Maintainer
 ------------------
