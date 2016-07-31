@@ -43,21 +43,13 @@ function text_sitemap_list_urls() {
   $query->fields('n', array('nid', 'type', 'uid', 'status'));
   $query->condition('status', 1);
   $query->orderBy('changed', 'DESC');
-  $query->limit(49999); // Protocol max 50,000: http://www.sitemaps.org/protocol.html
+  $query->range(0, 49998); // Protocol max 50,000: http://www.sitemaps.org/protocol.html
   $result = $query->execute();
 
   $account = user_load(0);
   foreach ($result as $node) {
     if (node_access('view', $node, $account)) {
       $text_sitemap[] = url('node/' . $node->nid, array('absolute' => TRUE));
-    }
-  }
-  if (module_exists('taxonomy')) {
-    $query = db_select('taxonomy_term_data', 'd');
-    $query->fields('d', array('tid'));
-    $result = $query->execute();
-    foreach ($result as $topic) {
-      $text_sitemap[] = url('taxonomy/term/' . $topic->tid, array('absolute' => TRUE));
     }
   }
 
