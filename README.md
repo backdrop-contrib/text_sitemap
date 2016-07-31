@@ -3,7 +3,7 @@ Text sitemap
 
 Creates a list of URLs to pages in a Backdrop site for indexing by search engines.
 
-Text sitemaps are [supported by Google Webmaster Tools](https://support.google.com/webmasters/answer/183668?hl=en).
+Text sitemaps are supported by [Google Webmaster Tools](https://support.google.com/webmasters/answer/183668?hl=en) and [Bing](https://www.bing.com/webmaster/help/how-to-submit-sitemaps-82a15bd4).
 
 If you use this module, and want to override listing a specific node, you could use robots.txt to make an exclusion or unpublish it.
 
