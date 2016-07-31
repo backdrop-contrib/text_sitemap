@@ -1,9 +1,0 @@
-Installation Instructions:
-
-1. Copy the urllist module directory to your modules directory.
-
-2. Enable URL list module at: Administration > Modules (admin/modules)
-
-3. The url list is now operational at q=urllist.txt or urllist.txt
-  
-4. Configure advanced options at Administration > Configuration > Web Services > URL list (admin/config/services/urllist)

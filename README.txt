@@ -1,25 +1,28 @@
-URL list module
+Text sitemap
+============
 
-Author:
-David Kent Norman
-http://deekayen.net/
+Creates a list of URLs to pages in a Backdrop site for indexing by search engines.
 
-DESCRIPTION
+Text sitemaps are [supported by Google Webmaster Tools](https://support.google.com/webmasters/answer/183668?hl=en).
+
+If you use this module, and want to override listing a specific node, you could use robots.txt to make an exclusion or unpublish it.
+
+The original port of this was based on code that was written before Views existed. It might be neat to make the next major version release based on a Views query instead of the custom code in this module.
+
+Current Maintainer
+------------------
+
+- David Norman (https://github.com/deekayen)
+
+Credits
 -----------
-Creates a list of links to pages in a Drupal site for indexing by search engines.
 
-DEPENDENCIES
-------------
-None
+- Originally written for Drupal by David Norman as URL list
+  (https://www.drupal.org/project/urllist)
+- Ported to Backdrop by David Norman (https://github.com/deekayen)
 
-INSTALLATION
-------------
-See INSTALL.txt in this directory.
+License
+-------
 
-MORE INFORMATION
-----------------
-Potential future features are gz output, turning off certain node types
-in the list, and the option to override specific nodes being listed.
-
-For now, if you use this module, and want to override listing a specific
-node, you could use robots.txt to make an exclusion or unpublish it.
+This project is GPL v2 software. See the LICENSE.txt file in this directory for
+complete text.
