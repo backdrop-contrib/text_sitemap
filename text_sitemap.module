@@ -56,6 +56,7 @@ function text_sitemap_list_urls() {
   $text_sitemap = implode("\n", $text_sitemap);
 
   cache_set('text_sitemap', $text_sitemap, 'cache', CACHE_TEMPORARY);
+  watchdog('text_sitemap', 'Sitemap cache refreshed.', NULL, WATCHDOG_DEBUG);
 
   return $text_sitemap;
 }
@@ -68,7 +69,7 @@ function text_sitemap_output() {
     backdrop_set_time_limit(240);
   }
 
-  watchdog('text_sitemap', 'Sitemap requested by ' . getenv('HTTP_USER_AGENT'), NULL, WATCHDOG_DEBUG);
+  watchdog('text_sitemap', 'Sitemap requested by ' . getenv('HTTP_USER_AGENT'), NULL, WATCHDOG_INFO);
 
   header('Content-type: text/plain');
   if ($text_sitemap = cache_get('text_sitemap', 'cache')) {
