@@ -25,7 +25,7 @@ None.
 Current Maintainer
 ------------------
 
-- David Norman (https://github.com/deekayen)
+- None
 
 Credits
 -----------
